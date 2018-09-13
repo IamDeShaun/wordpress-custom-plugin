@@ -50,6 +50,38 @@ Text Domain: spiffy-email-list-builder
 
 /* !2. SHORTCODES */
 
+function selb_form ( $args, $content="") {
+    
+  // setup our output variable - the form html
+  $output = '
+  
+    <div class="selb">
+      <form id="selb_form" name="selb_form" class="selb-form" method="post">
+        <p class="selb-input-container">
+            <label>Your Name</label> <br />
+            <input type="text" name="selb_fname" placeholder="First Name" />
+            <input type="text" name="selb_lname" placeholder="Last Name" />
+        </p>
+
+        <p class="selb-input-container">
+        <label>Your Email</label> <br />
+        <input type="email" name="selb_email" placeholder="ex.  you@email.com" />
+    </p>
+
+    <p class="selb-input-container">
+
+    <input type="submit" name="selb_submit" value="Sign Me Up!" />
+</p>
+
+      </form>
+
+    </div>
+  
+  '; 
+
+  // return our results/html
+  return $output;
+}
 
 
 
