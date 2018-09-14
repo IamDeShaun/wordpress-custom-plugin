@@ -18,12 +18,12 @@ Text Domain: spiffy-email-list-builder
 
 /*
 	
-  1. HOOKS
-    1.1 - registers all our custom shortcodes
+	1. HOOKS
+		1.1 - registers all our custom shortcodes
 	
-  2. SHORTCODES
-    2.1 - selb_register_shortcodes()
-    2.2 - selb_form_sortcode()
+	2. SHORTCODES
+		2.1 - slb_register_shortcodes()
+		2.2 - slb_form_shortcode()
 		
 	3. FILTERS
 		
@@ -38,8 +38,6 @@ Text Domain: spiffy-email-list-builder
 	8. ADMIN PAGES
 	
 	9. SETTINGS
-	
-	10. MISCELLANEOUS 
 
 */
 
@@ -48,62 +46,73 @@ Text Domain: spiffy-email-list-builder
 
 /* !1. HOOKS */
 
-// 1.1 
-add_action('init', 'selb_register_shortcodes');
+// 1.1
+// hint: registers all our custom shortcodes on init
+add_action('init', 'slb_register_shortcodes');
 
 
 
 /* !2. SHORTCODES */
 
 // 2.1
-function selb_register_shortcodes() {
-
-  add_action('selb_form', 'selb_form_shortcode');
-
+// hint: registers all our custom shortcodes
+function slb_register_shortcodes() {
+	
+	add_shortcode('slb_form', 'slb_form_shortcode');
+	
 }
-
 
 // 2.2
-function selb_form_sortcode ( $args, $content="") {
-    
-  // setup our output variable - the form html
-  $output = '
-  
-    <div class="selb">
-      <form id="selb_form" name="selb_form" class="selb-form" method="post">
-        <p class="selb-input-container">
-            <label>Your Name</label> <br />
-            <input type="text" name="selb_fname" placeholder="First Name" />
-            <input type="text" name="selb_lname" placeholder="Last Name" />
-        </p>
-
-        <p class="selb-input-container">
-        <label>Your Email</label> <br />
-        <input type="email" name="selb_email" placeholder="ex.  you@email.com" />
-    </p>';
-      // including content in our form html if content is passed into the function
-    if(strlen($content) ):
-
-
-        $output .= '<div class="selb-content">'. wpautop($content) .'</div>';
-
-    endif;
-
-    // completing our html form
-    $output .= '<p class="selb-input-container">
-
-    <input type="submit" name="selb_submit" value="Sign Me Up!" />
-</p>
-
-      </form>
-
-    </div>
-  
-  '; 
-
-  // return our results/html
-  return $output;
+// hint: returns a html string for a email capture form
+function slb_form_shortcode( $args, $content="") {
+	
+	// setup our output variable - the form html 
+	$output = '
+	
+		<div class="slb">
+		
+			<form id="slb_form" name="slb_form" class="slb-form" method="post">
+			
+				<p class="slb-input-container">
+				
+					<label>Your Name</label><br />
+					<input type="text" name="slb_fname" placeholder="First Name" />
+					<input type="text" name="slb_lname" placeholder="Last Name" />
+				
+				</p>
+				
+				<p class="slb-input-container">
+				
+					<label>Your Email</label><br />
+					<input type="email" name="slb_email" placeholder="ex. you@email.com" />
+				
+				</p>';
+				
+				// including content in our form html if content is passed into the function
+				if( strlen($content) ):
+				
+					$output .= '<div class="slb-content">'. wpautop($content) .'</div>';
+				
+				endif;
+				
+				// completing our form html
+				$output .= '<p class="slb-input-container">
+				
+					<input type="submit" name="slb_submit" value="Sign Me Up!" />
+				
+				</p>
+			
+			</form>
+		
+		</div>
+	
+	';
+	
+	// return our results/html
+	return $output;
+	
 }
+
 
 
 
@@ -138,11 +147,3 @@ function selb_form_sortcode ( $args, $content="") {
 
 
 /* !9. SETTINGS */
-
-
-
-
-/* !10. MISCELLANEOUS */
-
-
-
