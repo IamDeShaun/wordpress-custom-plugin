@@ -18,9 +18,12 @@ Text Domain: spiffy-email-list-builder
 
 /*
 	
-	1. HOOKS
+  1. HOOKS
+    1.1 - registers all our custom shortcodes
 	
-	2. SHORTCODES
+  2. SHORTCODES
+    2.1 - selb_register_shortcodes()
+    2.2 - selb_form_sortcode()
 		
 	3. FILTERS
 		
@@ -45,12 +48,23 @@ Text Domain: spiffy-email-list-builder
 
 /* !1. HOOKS */
 
+// 1.1 
+add_action('init', 'selb_register_shortcodes');
 
 
 
 /* !2. SHORTCODES */
 
-function selb_form ( $args, $content="") {
+// 2.1
+function selb_register_shortcodes() {
+
+  add_action('selb_form', 'selb_form_shortcode');
+
+}
+
+
+// 2.2
+function selb_form_sortcode ( $args, $content="") {
     
   // setup our output variable - the form html
   $output = '
@@ -66,9 +80,17 @@ function selb_form ( $args, $content="") {
         <p class="selb-input-container">
         <label>Your Email</label> <br />
         <input type="email" name="selb_email" placeholder="ex.  you@email.com" />
-    </p>
+    </p>';
+      // including content in our form html if content is passed into the function
+    if(strlen($content) ):
 
-    <p class="selb-input-container">
+
+        $output .= '<div class="selb-content">'. wpautop($content) .'</div>';
+
+    endif;
+
+    // completing our html form
+    $output .= '<p class="selb-input-container">
 
     <input type="submit" name="selb_submit" value="Sign Me Up!" />
 </p>
