@@ -137,6 +137,31 @@ return $columns;
 
 }
 
+// 3.2 
+function slb_subscriber_column_data( $column, $post_id) {
+
+	// setup our return text
+	$output = '';
+
+	switch ( $column ) {
+
+			case 'title':
+			// get the custom name data
+			$fname = get_field('slb_fname', $post_id );
+			$lname = get_field('slb_lname', $post_id );
+			$output .= $fname .' '. $lname;
+			break;
+			case 'email';
+			//get the custom email data
+			$email = get_field('slb_email', $post_id);
+			$output .= $email;
+			break;
+
+	}
+
+	// echo the output
+	echo $output;
+}
 
 
 /* !4. EXTERNAL SCRIPTS */
