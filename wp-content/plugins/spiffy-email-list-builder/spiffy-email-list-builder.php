@@ -118,6 +118,20 @@ function slb_form_shortcode( $args, $content="") {
 
 /* !3. FILTERS */
 
+// 31
+function slb_subscriber_column_headers( $columns ) {
+
+	// creating custom column header data
+	$columns = array(
+		'cb'=>'input type="checkbox" />',
+		'title'=>_('Subscriber Name'),
+		'email'=>_('Email Address'),
+
+	);
+// returning new columns
+return $columns;
+
+}
 
 
 
