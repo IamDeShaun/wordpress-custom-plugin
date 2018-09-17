@@ -20,12 +20,20 @@ Text Domain: spiffy-email-list-builder
 	
 	1. HOOKS
 		1.1 - registers all our custom shortcodes
-	
+		1.2 - register admin custom column header
+		1.3 - register custom admin column data
 	2. SHORTCODES
 		2.1 - slb_register_shortcodes()
 		2.2 - slb_form_shortcode()
 		
 	3. FILTERS
+			3.1 - slb_subscriber_column_headers()
+			3.2 - slb_subscriber_column_data()
+			3.2.2 - slb_register_custom_admin_titles()
+			3.2.3 - slb_custom_admin_titles()
+			3.3 - slb_list_column_headers()
+			3.4 - slb_list_column_data()
+
 		
 	4. EXTERNAL SCRIPTS
 		
@@ -55,6 +63,7 @@ add_action('init', 'slb_register_shortcodes');
 // hint: registers the custom admin column headers
 
 add_filter('manage_edit-slb_subscriber_columns','slb_subscriber_column_headers');
+add_filter('manage_edit-slb_list_columns','slb_list_column_headers');
 
 // 1.3
 // hint: register custom admin column data
@@ -64,6 +73,8 @@ add_action(
 	'slb_register_custom_admin_titles'
 
 );
+
+add_filter('manage_slb_list_posts_custom_column','slb_list_column_data',1,2);
 
 /* !2. SHORTCODES */
 
@@ -131,12 +142,12 @@ function slb_form_shortcode( $args, $content="") {
 
 /* !3. FILTERS */
 
-// 31
+// 3.1
 function slb_subscriber_column_headers( $columns ) {
 
 	// creating custom column header data
 	$columns = array(
-		'cb'=>'input type="checkbox" />',
+		'cb'=>'<input type="checkbox" />',
 		'title'=>_('Subscriber Name'),
 		'email'=>_('Email Address'),
 
@@ -203,6 +214,48 @@ function slb_custom_admin_titles( $title, $post_id) {
 			return $output;
 
 }
+
+// 3.3
+function slb_list_column_headers( $columns ) {
+
+	// creating custom column header data
+	$columns = array(
+		'cb'=>'<input type="checkbox" />',
+		'title'=>_('List Name'),
+
+	);
+// returning new columns
+return $columns;
+
+}
+
+
+// 3.4
+function slb_list_column_data( $column, $post_id) {
+
+	// setup our return text
+	$output = '';
+
+	switch ( $column ) {
+
+			case 'example':
+			// get the custom name data
+
+	/*
+			$fname = get_field('slb_fname', $post_id );
+			$lname = get_field('slb_lname', $post_id );
+			$output .= $fname .' '. $lname;
+
+	*/
+			break;
+		
+
+	}
+
+	// echo the output
+	echo $output;
+}
+
 
 /* !4. EXTERNAL SCRIPTS */
 
