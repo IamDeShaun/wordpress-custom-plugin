@@ -168,6 +168,37 @@ function slb_subscriber_column_data( $column, $post_id) {
 	echo $output;
 }
 
+// 3.2.2
+// hint: registers special custom admin title columns
+function slb_register_custom_admin_titles() {
+	add_filter(
+		'the_title',
+		'slb_custom_admin_titles',
+		99,
+		2
+	);
+}
+
+// 3.2.3
+// hint: handles custom admin title "title" column data for post types without titles
+function slb_custom_admin_titles( $title, $post_id) {
+
+	global $post;
+
+	$output = $title;
+	if( isset($post->post_type) ):
+				switch( $post->post_type ) {
+					case 'slb_subscriber':
+									$fname = get_field('slb_fname', $post_id );
+									$lname = get_field('slb_lname', $post_id );
+									$output = $fname .' '. $lname;
+									break;
+				}
+			endif;
+
+			return $output;
+
+}
 
 /* !4. EXTERNAL SCRIPTS */
 
