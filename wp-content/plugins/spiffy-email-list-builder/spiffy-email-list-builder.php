@@ -53,8 +53,8 @@ add_action('init', 'slb_register_shortcodes');
 
 // 1.2
 // hint: registers the custom admin column headers
-add_filter_('manage_edit-slb_subscriber_columns','slb_subscriber_column_headers');
 
+add_filter('manage_edit-slb_subscriber_columns','slb_subscriber_column_headers');
 
 /* !2. SHORTCODES */
 
