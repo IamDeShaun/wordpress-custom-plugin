@@ -489,6 +489,35 @@ function slb_get_subscriber_id( $email ) {
 	
 }
 
+// 6.3
+// hint: returns an array of list_id's
+function slb_get_subscriptions( $subscriber_id ) {
+	
+	$subscriptions = array();
+	
+	// get subscriptions (returns array of list objects)
+	$lists = get_field( slb_get_acf_key('slb_subscriptions'), $subscriber_id );
+	
+	// IF $lists returns something
+	if( $lists ):
+	
+		// IF $lists is an array and there is one or more items
+		if( is_array($lists) && count($lists) ):
+			// build subscriptions: array of list id's
+			foreach( $lists as &$list):
+				$subscriptions[]= (int)$list->ID;
+			endforeach;
+		elseif( is_numeric($lists) ):
+			// single result returned
+			$subscriptions[]= $lists;
+		endif;
+	
+	endif;
+	
+	return (array)$subscriptions;
+	
+}
+
 
 /* !7. CUSTOM POST TYPES */
 
