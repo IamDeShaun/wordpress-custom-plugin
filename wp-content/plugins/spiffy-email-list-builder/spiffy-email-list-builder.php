@@ -22,6 +22,7 @@ Text Domain: spiffy-email-list-builder
 		1.2 - register custom admin column headers
 		1.3 - register custom admin column data
 		1.4 - register ajax actions
+		1.5 - load external files to public website
 	
 	2. SHORTCODES
 		2.1 - slb_register_shortcodes()
@@ -34,6 +35,7 @@ Text Domain: spiffy-email-list-builder
 		3.4 - slb_list_column_data()
 		
 	4. EXTERNAL SCRIPTS
+		4.1 - slb_public_scripts()
 		
 	5. ACTIONS
 		5.1 - slb_save_subscription()
@@ -108,7 +110,7 @@ function slb_form_shortcode( $args, $content="") {
 		<div class="slb">
 		
 			<form id="slb_form" name="slb_form" class="slb-form" method="post"
-			action="wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
+			action="/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
 			
 				<input type="hidden" name="slb_list" value="'. $list_id .'">
 			
@@ -249,6 +251,8 @@ function slb_public_scripts() {
 	wp_enqueue_script('snappy-list-builder-js-public');
 	
 }
+
+
 
 
 /* !5. ACTIONS */
