@@ -412,7 +412,36 @@ function slb_add_subscription( $subscriber_id, $list_id ) {
 
 /* !6. HELPERS */
 
-
+// 6.1
+// hint: returns true or false
+function slb_subscriber_has_subscription( $subscriber_id, $list_id ) {
+	
+	// setup default return value
+	$has_subscription = false;
+	
+	// get subscriber
+	$subscriber = get_post($subscriber_id);
+	
+	// get subscriptions
+	$subscriptions = slb_get_subscriptions( $subscriber_id );
+	
+	// check subscriptions for $list_id
+	if( in_array($list_id, $subscriptions) ):
+	
+		// found the $list_id in $subscriptions
+		// this subscriber is already subscribed to this list
+		$has_subscription = true;
+	
+	else:
+	
+		// did not find $list_id in $subscriptions
+		// this subscriber is not yet subscribed to this list
+	
+	endif;
+	
+	return $has_subscription;
+	
+}
 
 
 /* !7. CUSTOM POST TYPES */
