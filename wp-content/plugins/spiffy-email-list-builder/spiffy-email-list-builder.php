@@ -104,7 +104,7 @@ function slb_form_shortcode( $args, $content="") {
 		<div class="slb">
 		
 			<form id="slb_form" name="slb_form" class="slb-form" method="post"
-			action="/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
+			action="wordpress-custom-plugin/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
 			
 				<input type="hidden" name="slb_list" value="'. $list_id .'">
 			
