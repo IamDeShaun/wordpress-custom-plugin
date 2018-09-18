@@ -80,6 +80,10 @@ add_filter('manage_slb_list_posts_custom_column','slb_list_column_data',1,2);
 add_action('wp_ajax_nopriv_slb_save_subscription', 'slb_save_subscription'); // regular website visitor
 add_action('wp_ajax_slb_save_subscription', 'slb_save_subscription'); // admin user
 
+// 1.5
+// load external files to public website
+add_action('wp_enqueue_scripts', 'slb_public_scripts');
+
 /* !2. SHORTCODES */
 
 // 2.1
@@ -234,7 +238,17 @@ function slb_list_column_data( $column, $post_id ) {
 
 /* !4. EXTERNAL SCRIPTS */
 
-
+// 4.1
+// hint: loads external files into PUBLIC website
+function slb_public_scripts() {
+	
+	// register scripts with WordPress's internal library
+	wp_register_script('snappy-list-builder-js-public', plugins_url('/js/public/snappy-list-builder.js',__FILE__), array('jquery'),'',true);
+	
+	// add to que of scripts that get loaded into every page
+	wp_enqueue_script('snappy-list-builder-js-public');
+	
+}
 
 
 /* !5. ACTIONS */
