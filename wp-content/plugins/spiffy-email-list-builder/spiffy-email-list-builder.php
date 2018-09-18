@@ -1,6 +1,5 @@
 <?php 
 
-
 /*
 Plugin Name: Spiffy Email List Builder
 Plugin URI: 
@@ -20,20 +19,19 @@ Text Domain: spiffy-email-list-builder
 	
 	1. HOOKS
 		1.1 - registers all our custom shortcodes
-		1.2 - register admin custom column header
+		1.2 - register custom admin column headers
 		1.3 - register custom admin column data
+		1.4 - register ajax actions
+	
 	2. SHORTCODES
 		2.1 - slb_register_shortcodes()
 		2.2 - slb_form_shortcode()
 		
 	3. FILTERS
-			3.1 - slb_subscriber_column_headers()
-			3.2 - slb_subscriber_column_data()
-			3.2.2 - slb_register_custom_admin_titles()
-			3.2.3 - slb_custom_admin_titles()
-			3.3 - slb_list_column_headers()
-			3.4 - slb_list_column_data()
-
+		3.1 - slb_subscriber_column_headers()
+		3.2 - slb_subscriber_column_data()
+		3.3 - slb_list_column_headers()
+		3.4 - slb_list_column_data()
 		
 	4. EXTERNAL SCRIPTS
 		
@@ -41,7 +39,14 @@ Text Domain: spiffy-email-list-builder
 		5.1 - slb_save_subscription()
 		5.2 - slb_save_subscriber()
 		5.3 - slb_add_subscription()
+		
 	6. HELPERS
+		6.1 - slb_has_subscriptions()
+		6.2 - slb_get_subscriber_id()
+		6.3 - slb_get_subscritions()
+		6.4 - slb_return_json()
+		6.5 - slb_get_acf_key()
+		6.6 - slb_get_subscriber_data()
 		
 	7. CUSTOM POST TYPES
 	
@@ -60,22 +65,14 @@ Text Domain: spiffy-email-list-builder
 // hint: registers all our custom shortcodes on init
 add_action('init', 'slb_register_shortcodes');
 
-
 // 1.2
-// hint: registers the custom admin column headers
-
+// hint: register custom admin column headers
 add_filter('manage_edit-slb_subscriber_columns','slb_subscriber_column_headers');
 add_filter('manage_edit-slb_list_columns','slb_list_column_headers');
 
 // 1.3
 // hint: register custom admin column data
 add_filter('manage_slb_subscriber_posts_custom_column','slb_subscriber_column_data',1,2);
-add_action(
-	'admin_head-edit.php',
-	'slb_register_custom_admin_titles'
-
-);
-
 add_filter('manage_slb_list_posts_custom_column','slb_list_column_data',1,2);
 
 // 1.4
@@ -96,7 +93,7 @@ function slb_register_shortcodes() {
 // 2.2
 // hint: returns a html string for a email capture form
 function slb_form_shortcode( $args, $content="") {
-
+	
 	// get the list id
 	$list_id = 0;
 	if( isset($args['id']) ) $list_id = (int)$args['id'];
@@ -106,8 +103,9 @@ function slb_form_shortcode( $args, $content="") {
 	
 		<div class="slb">
 		
-			<form id="slb_form" name="slb_form" class="slb-form" method="post" action="/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
-
+			<form id="slb_form" name="slb_form" class="slb-form" method="post"
+			action="/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
+			
 				<input type="hidden" name="slb_list" value="'. $list_id .'">
 			
 				<p class="slb-input-container">
@@ -157,117 +155,81 @@ function slb_form_shortcode( $args, $content="") {
 
 // 3.1
 function slb_subscriber_column_headers( $columns ) {
-
+	
 	// creating custom column header data
 	$columns = array(
 		'cb'=>'<input type="checkbox" />',
-		'title'=>_('Subscriber Name'),
-		'email'=>_('Email Address'),
-
+		'title'=>__('Subscriber Name'),
+		'email'=>__('Email Address'),	
 	);
-// returning new columns
-return $columns;
-
+	
+	// returning new columns
+	return $columns;
+	
 }
 
-// 3.2 
-function slb_subscriber_column_data( $column, $post_id) {
-
+// 3.2
+function slb_subscriber_column_data( $column, $post_id ) {
+	
 	// setup our return text
 	$output = '';
-
-	switch ( $column ) {
-
-			case 'title':
+	
+	switch( $column ) {
+		
+		case 'name':
 			// get the custom name data
 			$fname = get_field('slb_fname', $post_id );
 			$lname = get_field('slb_lname', $post_id );
 			$output .= $fname .' '. $lname;
 			break;
-			case 'email';
-			//get the custom email data
-			$email = get_field('slb_email', $post_id);
+		case 'email':
+			// get the custom email data
+			$email = get_field('slb_email', $post_id );
 			$output .= $email;
 			break;
-
+		
 	}
-
+	
 	// echo the output
 	echo $output;
-}
-
-// 3.2.2
-// hint: registers special custom admin title columns
-function slb_register_custom_admin_titles() {
-	add_filter(
-		'the_title',
-		'slb_custom_admin_titles',
-		99,
-		2
-	);
-}
-
-// 3.2.3
-// hint: handles custom admin title "title" column data for post types without titles
-function slb_custom_admin_titles( $title, $post_id) {
-
-	global $post;
-
-	$output = $title;
-	if( isset($post->post_type) ):
-				switch( $post->post_type ) {
-					case 'slb_subscriber':
-									$fname = get_field('slb_fname', $post_id );
-									$lname = get_field('slb_lname', $post_id );
-									$output = $fname .' '. $lname;
-									break;
-				}
-			endif;
-
-			return $output;
-
+	
 }
 
 // 3.3
 function slb_list_column_headers( $columns ) {
-
+	
 	// creating custom column header data
 	$columns = array(
 		'cb'=>'<input type="checkbox" />',
-		'title'=>_('List Name'),
-
+		'title'=>__('List Name'),
+		'shortcode'=>__('Shortcode'),	
 	);
-// returning new columns
-return $columns;
-
+	
+	// returning new columns
+	return $columns;
+	
 }
 
-
-// 3.4
-function slb_list_column_data( $column, $post_id) {
-
+// 3.2
+function slb_list_column_data( $column, $post_id ) {
+	
 	// setup our return text
 	$output = '';
-
-	switch ( $column ) {
-
-			case 'example':
-			// get the custom name data
-
-	/*
-			$fname = get_field('slb_fname', $post_id );
-			$lname = get_field('slb_lname', $post_id );
-			$output .= $fname .' '. $lname;
-
-	*/
+	
+	switch( $column ) {
+		
+		case 'shortcode':
+			$output .= '[slb_form id="'. $post_id .'"]';
 			break;
 		
-
 	}
-
+	
 	// echo the output
 	echo $output;
+	
 }
+
+
 
 
 /* !4. EXTERNAL SCRIPTS */
@@ -285,6 +247,8 @@ function slb_save_subscription() {
 	$result = array(
 		'status' => 0,
 		'message' => 'Subscription was not saved. ',
+		'error'=>'',
+		'errors'=>array()
 	);
 	
 	try {
@@ -440,6 +404,7 @@ function slb_add_subscription( $subscriber_id, $list_id ) {
 
 
 
+
 /* !6. HELPERS */
 
 // 6.1
@@ -562,6 +527,7 @@ function slb_return_json( $php_array ) {
 	
 }
 
+
 //6.5
 // hint: gets the unique act field key from the field name
 function slb_get_acf_key( $field_name ) {
@@ -588,6 +554,7 @@ function slb_get_acf_key( $field_name ) {
 	return $field_key;
 	
 }
+
 
 // 6.6
 // hint: returns an array of subscriber data including subscriptions
@@ -623,6 +590,7 @@ function slb_get_subscriber_data( $subscriber_id ) {
 }
 
 
+
 /* !7. CUSTOM POST TYPES */
 
 
@@ -634,3 +602,4 @@ function slb_get_subscriber_data( $subscriber_id ) {
 
 
 /* !9. SETTINGS */
+
