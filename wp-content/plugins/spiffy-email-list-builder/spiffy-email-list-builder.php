@@ -518,6 +518,20 @@ function slb_get_subscriptions( $subscriber_id ) {
 	
 }
 
+// 6.4
+function slb_return_json( $php_array ) {
+	
+	// encode result as json string
+	$json_result = json_encode( $php_array );
+	
+	// return result
+	die( $json_result );
+	
+	// stop all other processing 
+	exit;
+	
+}
+
 
 /* !7. CUSTOM POST TYPES */
 
