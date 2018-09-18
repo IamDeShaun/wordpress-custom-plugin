@@ -103,6 +103,10 @@ function slb_form_shortcode( $args, $content="") {
 	// get the list id
 	$list_id = 0;
 	if( isset($args['id']) ) $list_id = (int)$args['id'];
+
+		// title
+		$title = '';
+		if( isset($args['title']) ) $title = (string)$args['title'];
 	
 	// setup our output variable - the form html 
 	$output = '
@@ -112,41 +116,47 @@ function slb_form_shortcode( $args, $content="") {
 			<form id="slb_form" name="slb_form" class="slb-form" method="post"
 			action="/wordpress-custom-plugin/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
 			
-				<input type="hidden" name="slb_list" value="'. $list_id .'">
+			<input type="hidden" name="slb_list" value="'. $list_id .'">';
+				
+				
+			if( strlen($title) ):
 			
-				<p class="slb-input-container">
-				
-					<label>Your Name</label><br />
-					<input type="text" name="slb_fname" placeholder="First Name" />
-					<input type="text" name="slb_lname" placeholder="Last Name" />
-				
-				</p>
-				
-				<p class="slb-input-container">
-				
-					<label>Your Email</label><br />
-					<input type="email" name="slb_email" placeholder="ex. you@email.com" />
-				
-				</p>';
-				
-				// including content in our form html if content is passed into the function
-				if( strlen($content) ):
-				
-					$output .= '<div class="slb-content">'. wpautop($content) .'</div>';
-				
-				endif;
-				
-				// completing our form html
-				$output .= '<p class="slb-input-container">
-				
-					<input type="submit" name="slb_submit" value="Sign Me Up!" />
-				
-				</p>
+				$output .= '<h3 class="slb-title">'. $title .'</h3>';
 			
-			</form>
+			endif;
 		
-		</div>
+			$output .='<p class="slb-input-container">
+			
+				<label>Your Name</label><br />
+				<input type="text" name="slb_fname" placeholder="First Name" />
+				<input type="text" name="slb_lname" placeholder="Last Name" />
+			
+			</p>
+			
+			<p class="slb-input-container">
+			
+				<label>Your Email</label><br />
+				<input type="email" name="slb_email" placeholder="ex. you@email.com" />
+			
+			</p>';
+			
+			// including content in our form html if content is passed into the function
+			if( strlen($content) ):
+			
+				$output .= '<div class="slb-content">'. wpautop($content) .'</div>';
+			
+			endif;
+			
+			// completing our form html
+			$output .= '<p class="slb-input-container">
+			
+				<input type="submit" name="slb_submit" value="Sign Me Up!" />
+			
+			</p>
+		
+		</form>
 	
+	</div>
 	';
 	
 	// return our results/html
