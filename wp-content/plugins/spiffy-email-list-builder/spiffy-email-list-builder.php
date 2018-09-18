@@ -78,6 +78,11 @@ add_action(
 
 add_filter('manage_slb_list_posts_custom_column','slb_list_column_data',1,2);
 
+// 1.4
+// hint: register ajax actions
+add_action('wp_ajax_nopriv_slb_save_subscription', 'slb_save_subscription'); // regular website visitor
+add_action('wp_ajax_slb_save_subscription', 'slb_save_subscription'); // admin user
+
 /* !2. SHORTCODES */
 
 // 2.1
@@ -294,39 +299,64 @@ function slb_save_subscription() {
 			'email'=> esc_attr( $_POST['slb_email'] ),
 		);
 		
-		// attempt to create/save subscriber
-		$subscriber_id = slb_save_subscriber( $subscriber_data );
+		// setup our errors array
+		$errors = array();
 		
-		// IF subscriber was saved successfully $subscriber_id will be greater than 0
-		if( $subscriber_id ):
+		// form validation
+		if( !strlen( $subscriber_data['fname'] ) ) $errors['fname'] = 'First name is required.';
+		if( !strlen( $subscriber_data['email'] ) ) $errors['email'] = 'Email address is required.';
+		if( strlen( $subscriber_data['email'] ) && !is_email( $subscriber_data['email'] ) ) $errors['email'] = 'Email address must be valid.';
 		
-			// IF subscriber already has this subscription
-			if( slb_subscriber_has_subscription( $subscriber_id, $list_id ) ):
+		// IF there are errors
+		if( count($errors) ):
+		
+			// append errors to result structure for later use
+			$result['error'] = 'Some fields are still required. ';
+			$result['errors'] = $errors;
+		
+		else: 
+		// IF there are no errors, proceed...
+		
+			// attempt to create/save subscriber
+			$subscriber_id = slb_save_subscriber( $subscriber_data );
 			
-				// get list object
-				$list = get_post( $list_id );
-				
-				// return detailed error
-				$result['message'] .= esc_attr( $subscriber_data['email'] .' is already subscribed to '. $list->post_title .'.');
-				
-			else: 
+			// IF subscriber was saved successfully $subscriber_id will be greater than 0
+			if( $subscriber_id ):
 			
-				// save new subscription
-				$subscription_saved = slb_add_subscription( $subscriber_id, $list_id );
-		
-				// IF subscription was saved successfully
-				if( $subscription_saved ):
+				// IF subscriber already has this subscription
+				if( slb_subscriber_has_subscription( $subscriber_id, $list_id ) ):
 				
-					// subscription saved!
-					$result['status']=1;
-					$result['message']='Subscription saved';
+					// get list object
+					$list = get_post( $list_id );
+					
+					// return detailed error
+					$result['error'] = esc_attr( $subscriber_data['email'] .' is already subscribed to '. $list->post_title .'.');
+					
+				else: 
+				
+					// save new subscription
+					$subscription_saved = slb_add_subscription( $subscriber_id, $list_id );
+			
+					// IF subscription was saved successfully
+					if( $subscription_saved ):
+					
+						// subscription saved!
+						$result['status']=1;
+						$result['message']='Subscription saved';
+						
+					else: 
+					
+						// return detailed error
+						$result['error'] = 'Unable to save subscription.';
+					
+					
+					endif;
 				
 				endif;
 			
 			endif;
 		
 		endif;
-		
 		
 	} catch ( Exception $e ) {
 		
