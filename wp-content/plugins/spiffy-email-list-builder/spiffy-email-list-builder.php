@@ -532,6 +532,66 @@ function slb_return_json( $php_array ) {
 	
 }
 
+//6.5
+// hint: gets the unique act field key from the field name
+function slb_get_acf_key( $field_name ) {
+	
+	$field_key = $field_name;
+	
+	switch( $field_name ) {
+		
+		case 'slb_fname':
+			$field_key = 'field_55c8ec63416a2';
+			break;
+		case 'slb_lname':
+			$field_key = 'field_55c8ec76416a3';
+			break;
+		case 'slb_email':
+			$field_key = 'field_55c8ec87416a4';
+			break;
+		case 'slb_subscriptions':
+			$field_key = 'field_55c8ecac416a5';
+			break;
+		
+	}
+	
+	return $field_key;
+	
+}
+
+// 6.6
+// hint: returns an array of subscriber data including subscriptions
+function slb_get_subscriber_data( $subscriber_id ) {
+	
+	// setup subscriber_data
+	$subscriber_data = array();
+	
+	// get subscriber object
+	$subscriber = get_post( $subscriber_id );
+	
+	// IF subscriber object is valid
+	if( isset($subscriber->post_type) && $subscriber->post_type == 'slb_subscriber' ):
+	
+		$fname = get_field( slb_get_acf_key('slb_fname'), $subscriber_id);
+		$lname = get_field( slb_get_acf_key('slb_lname'), $subscriber_id);
+	
+		// build subscriber_data for return
+		$subscriber_data = array(
+			'name'=> $fname .' '. $lname,
+			'fname'=>$fname,
+			'lname'=>$lname,
+			'email'=>get_field( slb_get_acf_key('slb_email'), $subscriber_id),
+			'subscriptions'=>slb_get_subscriptions( $subscriber_id )
+		);
+		
+	
+	endif;
+	
+	// return subscriber_data
+	return $subscriber_data;
+	
+}
+
 
 /* !7. CUSTOM POST TYPES */
 
