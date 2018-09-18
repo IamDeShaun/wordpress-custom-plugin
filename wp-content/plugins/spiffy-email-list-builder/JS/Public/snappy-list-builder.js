@@ -2,7 +2,7 @@
 jQuery(document).ready(function($){
 	
 	// setup our wp ajax URL
-	var wpajax_url = document.location.protocol + '//' + document.location.host + '/wp-admin/admin-ajax.php';
+	var wpajax_url = document.location.protocol + '//' + document.location.host + '/wordpress-custom-plugin/wp-admin/admin-ajax.php';
 	
 	// email capture action url
 	var email_capture_url = wpajax_url += '?action=slb_save_subscription';

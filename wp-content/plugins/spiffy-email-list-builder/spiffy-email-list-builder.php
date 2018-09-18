@@ -110,7 +110,7 @@ function slb_form_shortcode( $args, $content="") {
 		<div class="slb">
 		
 			<form id="slb_form" name="slb_form" class="slb-form" method="post"
-			action="wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
+			action="/wordpress-custom-plugin/wp-admin/admin-ajax.php?action=slb_save_subscription" method="post">
 			
 				<input type="hidden" name="slb_list" value="'. $list_id .'">
 			
@@ -246,10 +246,11 @@ function slb_public_scripts() {
 	
 	// register scripts with WordPress's internal library
 	wp_register_script('snappy-list-builder-js-public', plugins_url('/js/public/snappy-list-builder.js',__FILE__), array('jquery'),'',true);
+	wp_register_style('snappy-list-builder-css-public', plugins_url('/css/public/snappy-list-builder.css',__FILE__));
 	
 	// add to que of scripts that get loaded into every page
 	wp_enqueue_script('snappy-list-builder-js-public');
-	
+	wp_enqueue_style('snappy-list-builder-css-public');
 }
 
 
